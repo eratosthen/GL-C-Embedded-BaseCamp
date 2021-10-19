@@ -2,3 +2,7 @@ Binaries
 Includes 
 Drivers 
 Debug
+*.ld
+*.ioc
+*.launch
+.*
