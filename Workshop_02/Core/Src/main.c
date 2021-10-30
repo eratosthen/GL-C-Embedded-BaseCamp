@@ -135,19 +135,19 @@ int main(void)
 		{
 		case MODE_CW:
 			currentLED = currentLED > 3 ? 0 : currentLED;
-			++currentLED;
 			HAL_GPIO_TogglePin(GPIOD, PIN(currentLED));
 			HAL_Delay(BLINK_DURATION);
 			HAL_GPIO_TogglePin(GPIOD, PIN(currentLED));
 			HAL_Delay(delay);
+			++currentLED;
 			break;
 		case MODE_ACW:
 			currentLED = currentLED > 3 ? 3 : currentLED;
-			--currentLED;
 			HAL_GPIO_TogglePin(GPIOD, PIN(currentLED));
 			HAL_Delay(BLINK_DURATION);
 			HAL_GPIO_TogglePin(GPIOD, PIN(currentLED));
 			HAL_Delay(delay);
+			--currentLED;
 			break;
 		case MODE_HV:
 			currentLED %= 2;
