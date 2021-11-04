@@ -52,9 +52,9 @@ enum
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
-unsigned int freqModifier = 1;
-unsigned int dutyCycle = 50;
-unsigned int currentChannel = 0;
+uint8_t freqModifier = 1;
+uint8_t dutyCycle = 50;
+uint8_t currentChannel = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,33 +71,33 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	switch(GPIO_Pin)
 	{
-	case DEC_FREQ_Pin:
+	case DEC_FREQ_BTN_Pin:
 		freqModifier = freqModifier > 1 ? freqModifier - 1 : 1;
 		htim4.Init.Prescaler = FREQ_BASE / freqModifier;
 		HAL_TIM_PWM_DeInit(&htim4);
 		HAL_TIM_PWM_Init(&htim4);
 		break;
-	case INC_FREQ_Pin:
+	case INC_FREQ_BTN_Pin:
 		freqModifier = freqModifier > FREQ_MOD_MAX ? FREQ_MOD_MAX : freqModifier + 1;
 		htim4.Init.Prescaler = FREQ_BASE / freqModifier;
 		HAL_TIM_PWM_DeInit(&htim4);
 		HAL_TIM_PWM_Init(&htim4);
 		break;
-	case DEC_DUTY_Pin:
+	case DEC_DUTY_BTN_Pin:
 		dutyCycle = dutyCycle != 0 ? dutyCycle - 5 : 0;
 		TIM4->CCR1 = dutyCycle;
 		TIM4->CCR2 = dutyCycle;
 		TIM4->CCR3 = dutyCycle;
 		TIM4->CCR4 = dutyCycle;
 		break;
-	case INC_DUTY_Pin:
+	case INC_DUTY_BTN_Pin:
 		dutyCycle = dutyCycle + 5 < 100 ? dutyCycle + 5 : 100;
 		TIM4->CCR1 = dutyCycle;
 		TIM4->CCR2 = dutyCycle;
 		TIM4->CCR3 = dutyCycle;
 		TIM4->CCR4 = dutyCycle;
 		break;
-	case NEXT_LED_Pin:
+	case NEXT_LED_BTN_Pin:
 		mode = mode < 4 ? mode + 1 : 0;
 		switch(mode)
 		{
@@ -305,17 +305,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
-  /*Configure GPIO pins : INC_FREQ_Pin DEC_FREQ_Pin DEC_DUTY_Pin INC_DUTY_Pin */
-  GPIO_InitStruct.Pin = INC_FREQ_Pin|DEC_FREQ_Pin|DEC_DUTY_Pin|INC_DUTY_Pin;
+  /*Configure GPIO pins : INC_FREQ_BTN_Pin DEC_FREQ_BTN_Pin DEC_DUTY_BTN_Pin INC_DUTY_BTN_Pin */
+  GPIO_InitStruct.Pin = INC_FREQ_BTN_Pin|DEC_FREQ_BTN_Pin|DEC_DUTY_BTN_Pin|INC_DUTY_BTN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : NEXT_LED_Pin */
-  GPIO_InitStruct.Pin = NEXT_LED_Pin;
+  /*Configure GPIO pin : NEXT_LED_BTN_Pin */
+  GPIO_InitStruct.Pin = NEXT_LED_BTN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(NEXT_LED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(NEXT_LED_BTN_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);

@@ -60,21 +60,21 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define INC_FREQ_Pin GPIO_PIN_6
-#define INC_FREQ_GPIO_Port GPIOC
-#define INC_FREQ_EXTI_IRQn EXTI9_5_IRQn
-#define DEC_FREQ_Pin GPIO_PIN_8
-#define DEC_FREQ_GPIO_Port GPIOC
-#define DEC_FREQ_EXTI_IRQn EXTI9_5_IRQn
-#define DEC_DUTY_Pin GPIO_PIN_9
-#define DEC_DUTY_GPIO_Port GPIOC
-#define DEC_DUTY_EXTI_IRQn EXTI9_5_IRQn
-#define NEXT_LED_Pin GPIO_PIN_15
-#define NEXT_LED_GPIO_Port GPIOA
-#define NEXT_LED_EXTI_IRQn EXTI15_10_IRQn
-#define INC_DUTY_Pin GPIO_PIN_11
-#define INC_DUTY_GPIO_Port GPIOC
-#define INC_DUTY_EXTI_IRQn EXTI15_10_IRQn
+#define INC_FREQ_BTN_Pin GPIO_PIN_6
+//#define INC_FREQ_BTN_GPIO_Port GPIOC
+//#define INC_FREQ_BTN_EXTI_IRQn EXTI9_5_IRQn
+#define DEC_FREQ_BTN_Pin GPIO_PIN_8
+//#define DEC_FREQ_BTN_GPIO_Port GPIOC
+//#define DEC_FREQ_BTN_EXTI_IRQn EXTI9_5_IRQn
+#define DEC_DUTY_BTN_Pin GPIO_PIN_9
+//#define DEC_DUTY_BTN_GPIO_Port GPIOC
+//#define DEC_DUTY_BTN_EXTI_IRQn EXTI9_5_IRQn
+#define NEXT_LED_BTN_Pin GPIO_PIN_15
+#define NEXT_LED_BTN_GPIO_Port GPIOA
+//#define NEXT_LED_BTN_EXTI_IRQn EXTI15_10_IRQn
+#define INC_DUTY_BTN_Pin GPIO_PIN_11
+//#define INC_DUTY_BTN_GPIO_Port GPIOC
+//#define INC_DUTY_BTN_EXTI_IRQn EXTI15_10_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
