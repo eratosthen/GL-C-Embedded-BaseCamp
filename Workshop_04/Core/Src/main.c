@@ -34,7 +34,7 @@
 /* USER CODE BEGIN PD */
 #define MAX_ADC_VAL 4095
 #define EMG_POT_LIMIT 3000
-#define EMG_EXT_LIMIT 1800
+#define EMG_EXT_LIMIT 20
 #define EMG_INTS_LIMIT 100
 #define INTS_TEMP_OFFSET 80
 #define MAX_ADC_VOLT 3.6
@@ -128,11 +128,11 @@ int main(void)
   //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
   while (1)
   {
-	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
 	  Led_Indication(adcData[2], BLUE_LED_Pin);
 	  Led_Indication(adcData[1], GREEN_LED_Pin);
 	  Led_Indication(adcData[0], ORANGE_LED_Pin);
 	  Emergency_Blink();
+	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -419,30 +419,20 @@ static void MX_GPIO_Init(void)
 void Led_Indication(int actualVal, uint16_t Pin)
 {
 	uint8_t duty = 0;
-	if (duty <= 100 && duty >=0)
+	switch (Pin)
 	{
-		switch (Pin)
-		{
-		case BLUE_LED_Pin:
-			duty = actualVal * 100 / MAX_ADC_VAL;
-			TIM4->CCR4 = duty;
-			break;
-		case ORANGE_LED_Pin:
-			duty = GET_INTS_TEMP_CEL(actualVal) - INTS_TEMP_OFFSET;
-			TIM4->CCR2 = duty;
-			break;
-		case GREEN_LED_Pin:
-		{
-			double buf = actualVal;
-			buf /= MAX_ADC_VAL;
-			buf *= MAX_ADC_VOLT;
-			buf *= -50;
-			buf += 100;
-			duty = (uint8_t)buf;
-			TIM4->CCR1 = duty;
-			break;
-		}
-		}
+	case BLUE_LED_Pin:
+		duty = actualVal * 100 / MAX_ADC_VAL;
+		TIM4->CCR4 = duty;
+		break;
+	case ORANGE_LED_Pin:
+		duty = GET_INTS_TEMP_CEL(actualVal) - INTS_TEMP_OFFSET;
+		TIM4->CCR2 = duty;
+		break;
+	case GREEN_LED_Pin:
+		duty = (uint8_t)getExtSensorTempCel(actualVal);
+		TIM4->CCR1 = duty;
+		break;
 	}
 }
 void Emergency_Blink()
@@ -452,7 +442,7 @@ void Emergency_Blink()
 	{
 		emgLevel++;
 	}
-	if(adcData[1] < EMG_EXT_LIMIT)
+	if((uint8_t)getExtSensorTempCel(adcData[1]) > EMG_EXT_LIMIT)
 	{
 		emgLevel++;
 	}
@@ -476,9 +466,20 @@ void Emergency_Blink()
 		TIM3->ARR = 200;
 		break;
 	default:
-		TIM3->ARR = 200;
+		HAL_GPIO_WritePin(GPIOD, RED_LED_Pin, GPIO_PIN_RESET);
+		TIM3->ARR = 0;
 		break;
 	}
+}
+
+double getExtSensorTempCel(int actualVal)
+{
+	double buf = actualVal;
+	buf /= MAX_ADC_VAL;
+	buf *= MAX_ADC_VOLT;
+	buf *= -50;
+	buf += 100;
+	return buf;
 }
 
 /* USER CODE END 4 */

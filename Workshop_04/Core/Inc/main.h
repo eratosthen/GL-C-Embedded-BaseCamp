@@ -58,6 +58,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 void Led_Indication(int actualVal, uint16_t Pin);
 void Emergency_Blink();
+double getExtSensorTempCel(int actualVal);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
