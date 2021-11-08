@@ -23,3 +23,8 @@ STM32F407 need to be switched for external clock (HSE).
 2 buttons would be used to set duty cycle (+/- 5% step each button press).
 Middle button would be used to select signal output (PD15, PD14, PD13, PD12 or no output (disable case)). Cyclic selection scheme.
 
+Workshop_4:
+Need to read voltage from potentiometer (connect it to IN3 channel). Show voltage with help of BLUE led (light intensity change). Too high voltage needs to be indicated with RED led (see p.4).
+Need to read temperature from internal temperature sensor (inside STM32F407). Show temperature with help of ORANGE led (light intensity change). Too high temperature needs to be indicated with RED led (see p.4).
+Need to read temperature from external analog temperature sensor (present at GL board). Show temperature with help of GREEN led (light intensity change). Too high temperature needs to be indicated with RED led (see p.4).
+RED led should be turned off if no “emergency citation” present (see p.1,2,3 “too high cases”). It should bling with 1Hz frequency if we have “one emergency situation”, it should blink with 2.5Hz frequency for case when we have 2 “emergency situations” at the same time. And 5Hz – if all 3 “emergencies” present.
