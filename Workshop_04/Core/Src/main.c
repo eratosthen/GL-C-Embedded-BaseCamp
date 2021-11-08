@@ -32,12 +32,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MAX_POT_VAL 4095
-#define MAX_EXTS_VAL 1000
-#define MAX_INTS_VAL 1100
-#define EMG_POT_LIMIT 4000
-#define EMG_INTS_LIMIT 1100
-#define EMG_EXTS_LIMIT 1800
+#define MAX_ADC_VAL 4095
+#define EMG_POT_LIMIT 3000
+#define EMG_EXT_LIMIT 1800
+#define EMG_INTS_LIMIT 100
+#define INTS_TEMP_OFFSET 80
+#define MAX_ADC_VOLT 3.6
+#define GET_INTS_TEMP_CEL(val) (__LL_ADC_CALC_TEMPERATURE(3600, val, ADC_RESOLUTION_12B))
+
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -74,7 +77,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	  if (hadc->Instance == ADC1)
 	  {
-		  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
+		  HAL_ADC_Stop(&hadc1);
 	  }
 }
 /* USER CODE END 0 */
@@ -122,9 +125,10 @@ int main(void)
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
+  //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
   while (1)
   {
+	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adcData, 3);
 	  Led_Indication(adcData[2], BLUE_LED_Pin);
 	  Led_Indication(adcData[1], GREEN_LED_Pin);
 	  Led_Indication(adcData[0], ORANGE_LED_Pin);
@@ -199,7 +203,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV8;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = ENABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -420,18 +424,24 @@ void Led_Indication(int actualVal, uint16_t Pin)
 		switch (Pin)
 		{
 		case BLUE_LED_Pin:
-			duty = actualVal * 100 / MAX_POT_VAL;
+			duty = actualVal * 100 / MAX_ADC_VAL;
 			TIM4->CCR4 = duty;
 			break;
 		case ORANGE_LED_Pin:
-			duty = 100 - (MAX_INTS_VAL - actualVal);
+			duty = GET_INTS_TEMP_CEL(actualVal) - INTS_TEMP_OFFSET;
 			TIM4->CCR2 = duty;
-				break;
+			break;
 		case GREEN_LED_Pin:
-			duty = 100 - (actualVal - MAX_EXTS_VAL) / 11;
-
-			TIM4->CCR1 = duty > 100 ? 0 : duty;
-				break;
+		{
+			double buf = actualVal;
+			buf /= MAX_ADC_VAL;
+			buf *= MAX_ADC_VOLT;
+			buf *= -50;
+			buf += 100;
+			duty = (uint8_t)buf;
+			TIM4->CCR1 = duty;
+			break;
+		}
 		}
 	}
 }
@@ -442,11 +452,11 @@ void Emergency_Blink()
 	{
 		emgLevel++;
 	}
-	if(adcData[1] < EMG_EXTS_LIMIT)
+	if(adcData[1] < EMG_EXT_LIMIT)
 	{
 		emgLevel++;
 	}
-	if(adcData[0] > EMG_INTS_LIMIT)
+	if(GET_INTS_TEMP_CEL(adcData[0]) > EMG_INTS_LIMIT)
 	{
 		emgLevel++;
 	}
@@ -470,6 +480,7 @@ void Emergency_Blink()
 		break;
 	}
 }
+
 /* USER CODE END 4 */
 
 /**

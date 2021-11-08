@@ -62,13 +62,13 @@ void Emergency_Blink();
 
 /* Private defines -----------------------------------------------------------*/
 #define GREEN_LED_Pin GPIO_PIN_12
-//#define GREEN_LED_GPIO_Port GPIOD
+#define GREEN_LED_GPIO_Port GPIOD
 #define ORANGE_LED_Pin GPIO_PIN_13
-//#define ORANGE_LED_GPIO_Port GPIOD
+#define ORANGE_LED_GPIO_Port GPIOD
 #define RED_LED_Pin GPIO_PIN_14
 #define RED_LED_GPIO_Port GPIOD
 #define BLUE_LED_Pin GPIO_PIN_15
-//#define BLUE_LED_GPIO_Port GPIOD
+#define BLUE_LED_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
